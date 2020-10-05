@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+    mysqldb:
+        image: mysql:5.7
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: wpSecureP@ssw0rd
+            MYSQL_DATABASE: wordpress
+            MYSQL_USER: wordpress
+            MYSQL_PASSWORD: wpSecureP@ssw0rd
+        networks:
+            - web
+
+    wordpress:
+        depends_on:
+            - mysqldb
+        image: wordpress:latest
+        restart: always
+        environment:
+            WORDPRESS_DB_HOST: mysqldb:3306
+            WORDPRESS_DB_USER: wordpress
+            WORDPRESS_DB_PASSWORD: wpSecureP@ssw0rd
+            WORDPRESS_DB_NAME: wordpress
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.wptest.rule=Host(`blog-test.deci.dev`)"
+            - "traefik.http.routers.wptest.entrypoints=websecure"
+        networks:
+            - web
+
+
+networks:
+    web:
+        external: true
