@@ -5,10 +5,10 @@ services:
         image: mysql:5.7
         restart: always
         environment:
-            MYSQL_ROOT_PASSWORD: wpSecureP@ssw0rd
-            MYSQL_DATABASE: wordpress
-            MYSQL_USER: wordpress
-            MYSQL_PASSWORD: wpSecureP@ssw0rd
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
         networks:
             - web
 
@@ -24,8 +24,8 @@ services:
             WORDPRESS_DB_NAME: wordpress
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.wptest.rule=Host(`blog-test.deci.dev`)"
-            - "traefik.http.routers.wptest.entrypoints=websecure"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${HTTP_HOST}`)"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
         networks:
             - web
 
