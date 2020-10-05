@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
     mysqldb:
+        container_name: ${COMPOSE_PROJECT_NAME}-db
         image: mysql:5.7
         restart: always
         environment:
@@ -13,22 +14,22 @@ services:
             - web
 
     wordpress:
+        container_name: ${COMPOSE_PROJECT_NAME}-wordpress
         depends_on:
-            - mysqldb
+            - ${COMPOSE_PROJECT_NAME}-db
         image: wordpress:latest
         restart: always
         environment:
-            WORDPRESS_DB_HOST: mysqldb:3306
-            WORDPRESS_DB_USER: wordpress
-            WORDPRESS_DB_PASSWORD: wpSecureP@ssw0rd
-            WORDPRESS_DB_NAME: wordpress
+            WORDPRESS_DB_HOST: ${COMPOSE_PROJECT_NAME}-db:3306
+            WORDPRESS_DB_USER: ${MYSQL_USER}
+            WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+            WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${HTTP_HOST}`)"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
         networks:
             - web
-
 
 networks:
     web:
