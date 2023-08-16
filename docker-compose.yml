@@ -10,15 +10,19 @@ services:
             MYSQL_DATABASE: ${MYSQL_DATABASE}
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - db:/var/lib/mysq
         networks:
             - web
 
     wordpress:
         container_name: ${COMPOSE_PROJECT_NAME}-wordpress
         depends_on:
-            - ${COMPOSE_PROJECT_NAME}-db
+            - mysqldb
         image: wordpress:latest
         restart: always
+        volumes:
+            - wordpress:/var/www/html
         environment:
             WORDPRESS_DB_HOST: ${COMPOSE_PROJECT_NAME}-db:3306
             WORDPRESS_DB_USER: ${MYSQL_USER}
@@ -30,6 +34,9 @@ services:
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
         networks:
             - web
+volumes:
+    wordpress:
+    db:
 
 networks:
     web:
